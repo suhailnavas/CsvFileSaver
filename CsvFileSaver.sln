@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvFileSaver", "CsvFileSaver\CsvFileSaver.csproj", "{3118DB95-D1EE-46CD-B409-281DF9A833A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvFileSaver_WebApi", "CsvFileSaver_WebApi\CsvFileSaver_WebApi.csproj", "{9F9A0DE7-9B95-4919-BF57-73D285CF1D04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3118DB95-D1EE-46CD-B409-281DF9A833A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3118DB95-D1EE-46CD-B409-281DF9A833A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3118DB95-D1EE-46CD-B409-281DF9A833A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3118DB95-D1EE-46CD-B409-281DF9A833A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F9A0DE7-9B95-4919-BF57-73D285CF1D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F9A0DE7-9B95-4919-BF57-73D285CF1D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F9A0DE7-9B95-4919-BF57-73D285CF1D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F9A0DE7-9B95-4919-BF57-73D285CF1D04}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2591805-3BD1-418C-88B0-921AAE2BF8B6}
+	EndGlobalSection
+EndGlobal
