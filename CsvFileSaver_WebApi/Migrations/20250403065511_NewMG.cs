@@ -5,23 +5,23 @@
 namespace CsvFileSaver_WebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class NewMigration : Migration
+    public partial class NewMG : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "LoginUser",
+                name: "UserDetails",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoginUser", x => x.UserId);
+                    table.PrimaryKey("PK_UserDetails", x => x.UserId);
                 });
         }
 
@@ -29,7 +29,7 @@ namespace CsvFileSaver_WebApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LoginUser");
+                name: "UserDetails");
         }
     }
 }

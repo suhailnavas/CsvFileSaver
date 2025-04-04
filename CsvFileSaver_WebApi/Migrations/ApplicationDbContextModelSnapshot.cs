@@ -21,7 +21,7 @@ namespace CsvFileSaver_WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CsvFileSaver_WebApi.Models.Dto.LoginDto", b =>
+            modelBuilder.Entity("CsvFileSaver_WebApi.Models.RegisterationRequest", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -29,17 +29,17 @@ namespace CsvFileSaver_WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
-                    b.ToTable("LoginUser");
+                    b.ToTable("UserDetails");
                 });
 #pragma warning restore 612, 618
         }

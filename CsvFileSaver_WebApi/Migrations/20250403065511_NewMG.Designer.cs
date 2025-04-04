@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CsvFileSaver_WebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250328061724_NewMigration")]
-    partial class NewMigration
+    [Migration("20250403065511_NewMG")]
+    partial class NewMG
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace CsvFileSaver_WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CsvFileSaver_WebApi.Models.Dto.LoginDto", b =>
+            modelBuilder.Entity("CsvFileSaver_WebApi.Models.RegisterationRequest", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -32,17 +32,17 @@ namespace CsvFileSaver_WebApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
-                    b.ToTable("LoginUser");
+                    b.ToTable("UserDetails");
                 });
 #pragma warning restore 612, 618
         }
