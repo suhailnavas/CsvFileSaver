@@ -6,6 +6,7 @@ using CsvFileSaver_WebApi.Models.Dto;
 using CsvFileSaver_WebApi.Repository.IRepository;
 using CsvFileSaver_WebApi.Utility;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Reflection.Metadata;
 
@@ -33,26 +34,31 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet(Constants.id, Name = Constants.GetOnedata)]
-        public async Task<ActionResult<APIResponse>> GetOnedata(int id)
+        [HttpPost("Login")]
+        public async Task<ActionResult<APIResponse>> Login(LoginRequestDto loginRequestDto)
         {
             try
             {
-                if (id < 0)
+                if (string.IsNullOrEmpty(loginRequestDto.Email))
                 {
                     return BadRequest();
                 }
                 else
                 {
-                    var builder = await _dbLogin.GetAsync(u => u.UserId == id);
+                    var builder = await _userRepo.Login(loginRequestDto);
                     if (builder == null)
                     {
+                        _response.IsSuccess = false;
+                        _response.StatusCode = HttpStatusCode.NotFound;
                         return NotFound();
                     }
-                    _response.Result = await _dbLogin.GetAsync(u => u.UserId == id);
-                    _response.IsSuccess = true;
-                    _response.StatusCode = HttpStatusCode.OK;
-                    return Ok(_response);
+                    else
+                    {
+                        _response.Result = builder;
+                        _response.IsSuccess = true;
+                        _response.StatusCode = HttpStatusCode.OK;
+                        return Ok(_response);
+                    }                   
                 }
             }
             catch (Exception ex)
@@ -64,40 +70,40 @@ namespace CsvFileSaver_WebApi.Controllers.V1
             return _response;
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> Login([FromBody]LoginDto userLogin)
-        {
-            try
-            {
-                if (userLogin == null)
-                {
-                    _response.StatusCode = HttpStatusCode.BadRequest;
-                    return BadRequest(_response);
-                }
+        //[HttpPost]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<ActionResult<APIResponse>> Login([FromBody]LoginDto userLogin)
+        //{
+        //    try
+        //    {
+        //        if (userLogin == null)
+        //        {
+        //            _response.StatusCode = HttpStatusCode.BadRequest;
+        //            return BadRequest(_response);
+        //        }
 
-                if (userLogin.UserId > 0)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError);
-                }
-                //createbuilderDTO.Id = _db.builder.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
-                Login usertdata = _mapper.Map<Login>(userLogin);
-                await _dbLogin.CreateAsync(usertdata);
-                _response.Result = userLogin;
-                _response.IsSuccess = true;
-                _response.StatusCode = HttpStatusCode.OK;
-                return CreatedAtRoute(Constants.GetOnedata, userLogin.UserId, userLogin);
-            }
-            catch (Exception ex)
-            {
-                _response.IsSuccess = false;
-                _response.ErrorMessages
-                     = new List<string>() { ex.ToString() };
-            }
-            return _response;
-        }
+        //        if (string.IsNullOrEmpty(userLogin.Email))
+        //        {
+        //            return StatusCode(StatusCodes.Status500InternalServerError);
+        //        }
+        //        //createbuilderDTO.Id = _db.builder.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
+        //        Login usertdata = _mapper.Map<Login>(userLogin);
+        //        await _dbLogin.CreateAsync(usertdata);
+        //        _response.Result = userLogin;
+        //        _response.IsSuccess = true;
+        //        _response.StatusCode = HttpStatusCode.OK;
+        //        return CreatedAtRoute(Constants.GetOnedata, userLogin.Email, userLogin);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.IsSuccess = false;
+        //        _response.ErrorMessages
+        //             = new List<string>() { ex.ToString() };
+        //    }
+        //    return _response;
+        //}
 
 
         [HttpPost("register")]

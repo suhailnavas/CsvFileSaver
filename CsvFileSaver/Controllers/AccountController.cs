@@ -2,6 +2,7 @@
 using CsvFileSaver.Models.Dto;
 using CsvFileSaver.Service.IService;
 using CsvFileSaver.ViewModel;
+using CsvFileSaver.ViewModel.UsersApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CsvFileSaver.Controllers
@@ -26,19 +27,52 @@ namespace CsvFileSaver.Controllers
         [HttpPost]
         public async Task<IActionResult> ButtonRegister(RegisterViewModel obj)
         {
-            RegisterationRequestDTO Registerobj = new RegisterationRequestDTO
-            {
-                Name = obj.Name,
-                Email = obj.Email,
-                Password =obj.Password
-            }; 
+            try {
+                RegisterationRequestDTO Registerobj = new RegisterationRequestDTO
+                {
+                    Name = obj.Name,
+                    Email = obj.Email,
+                    Password = obj.Password
+                };
 
-            APIResponse result = await _authService.RegisterAsync<APIResponse>(Registerobj);
-            if (result != null && result.IsSuccess)
-            {
-                return RedirectToAction("Login");
+                APIResponse result = await _authService.RegisterAsync<APIResponse>(Registerobj);
+                if (result != null && result.IsSuccess)
+                {
+                    return RedirectToAction("Login");
+                }
             }
-            return View();
+            catch(Exception e)
+            {
+
+            }
+            
+            return View("Register");
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> LoginButton(LoginViewModel obj)
+        {
+            try
+            {
+                LoginRequestDto requestobj = new LoginRequestDto
+                {
+                    Email = obj.Email,
+                    Password = obj.Password
+                };
+
+                APIResponse result = await _authService.LoginAsync<APIResponse>(requestobj);
+                if (result != null && result.IsSuccess)
+                {
+                    return RedirectToAction("Login");
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return View("Register");
         }
     }
 }

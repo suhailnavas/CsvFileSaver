@@ -16,15 +16,15 @@ namespace CsvFileSaver.Service
 
         }
 
-        //public Task<T> LoginAsync<T>(LoginRequestDTO obj)
-        //{
-        //    return _baseService.SendAsync<T>(new APIRequest()
-        //    {
-        //        ApiType = SD.ApiType.POST,
-        //        Data = obj,
-        //        Url = builderUrl + "api/v1/UsersAuth/login"
-        //    });
-        //}
+        public Task<T> LoginAsync<T>(LoginRequestDto obj)
+        {
+            return _baseService.SendAsync<T>(new APIRequest()
+            {
+                ApiType = Constants.ApiType.POST,
+                Data = obj,
+                Url = builderUrl + Constants.LoginRequestEndPoint
+            });
+        }
 
         public Task<T> RegisterAsync<T>(RegisterationRequestDTO obj)
         {

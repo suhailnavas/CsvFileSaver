@@ -27,11 +27,29 @@ namespace CsvFileSaver_WebApi.Repository
             return false;
         }
 
+        public Task<LoginResponceDto> Login(LoginRequestDto loginRequestDTO)
+        {
+            var user = _db.UserDetails.FirstOrDefault(x => x.Email == loginRequestDTO.Email);
+
+            LoginResponceDto response = new LoginResponceDto
+            {
+                Email = user.Email,
+                Name = user.Name,
+            };
+            if (user == null)
+            {
+
+                return null;
+            }
+            return Task.FromResult(response);
+        }
+
         public async Task<RegisterationRequest> Register(RegisterationRequestDTO registerationRequestDTO)
         {
 
             RegisterationRequest user = new()
             {
+                Name = registerationRequestDTO.Name,
                 Email = registerationRequestDTO.Email,
                 Password = registerationRequestDTO.Password,
             };

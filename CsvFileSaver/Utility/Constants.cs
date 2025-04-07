@@ -19,6 +19,7 @@
 
         //Url EndPoints
         public static string LoginRegisterEndPoint = "api/v1/Login/register";
+        public static string LoginRequestEndPoint = "api/v1/Login/Login";
 
         public enum ContentType
         {
