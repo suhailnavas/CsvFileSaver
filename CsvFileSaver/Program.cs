@@ -1,7 +1,29 @@
+using CsvFileSaver.Models;
+using CsvFileSaver.Service.IService;
+using CsvFileSaver.Service;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<IAuthService, AuthService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBaseService, BaseService>();
+
+//builder.Services.AddScoped<IBaseService, BaseService>();
+//builder.Services.AddIdentity<Users, IdentityRole>(options =>
+//{
+//    options.Password.RequireNonAlphanumeric = false;
+//    options.Password.RequiredLength = 8;
+//    options.Password.RequireUppercase = false;
+//    options.Password.RequireLowercase = false;
+//    options.User.RequireUniqueEmail = true;
+//    options.SignIn.RequireConfirmedAccount = false;
+//    options.SignIn.RequireConfirmedEmail = false;
+//    options.SignIn.RequireConfirmedPhoneNumber = false;
+//});
 
 var app = builder.Build();
 

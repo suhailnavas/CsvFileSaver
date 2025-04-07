@@ -1,4 +1,5 @@
-﻿using CsvFileSaver_WebApi.Models.Dto;
+﻿using CsvFileSaver_WebApi.Models;
+using CsvFileSaver_WebApi.Models.Dto;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -10,8 +11,7 @@ namespace CsvFileSaver_WebApi.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        public DbSet<LoginDto> LoginUser { get; set; }
-
-        
+        //public DbSet<Login> LoginUserDetails { get; set; }       
+        public DbSet<RegisterationRequest> UserDetails { get; set; }       
     }
 }
