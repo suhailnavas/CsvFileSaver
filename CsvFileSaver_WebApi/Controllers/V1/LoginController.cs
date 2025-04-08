@@ -45,16 +45,17 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                 }
                 else
                 {
-                    var builder = await _userRepo.Login(loginRequestDto);
-                    if (builder == null)
+                    var loginResponce = await _userRepo.Login(loginRequestDto);
+                    if (loginResponce == null)
                     {
                         _response.IsSuccess = false;
                         _response.StatusCode = HttpStatusCode.NotFound;
+                        _response.ErrorMessages.Add("Invalid User Name Or Password");
                         return NotFound();
                     }
                     else
                     {
-                        _response.Result = builder;
+                        _response.Result = loginResponce;
                         _response.IsSuccess = true;
                         _response.StatusCode = HttpStatusCode.OK;
                         return Ok(_response);
