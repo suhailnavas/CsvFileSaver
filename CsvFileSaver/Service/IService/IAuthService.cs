@@ -6,5 +6,7 @@ namespace CsvFileSaver.Service.IService
     {
         Task<T> LoginAsync<T>(LoginRequestDto objTologin);
         Task<T> RegisterAsync<T>(RegisterationRequestDTO objToCreate);
+        void SetToken(string accessToken);
     }
 }
+

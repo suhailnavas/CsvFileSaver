@@ -3,7 +3,12 @@ using CsvFileSaver.Models.Dto;
 using CsvFileSaver.Service.IService;
 using CsvFileSaver.ViewModel;
 using CsvFileSaver.ViewModel.UsersApp.ViewModels;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CsvFileSaver.Controllers
 {
@@ -64,12 +69,22 @@ namespace CsvFileSaver.Controllers
                 APIResponse result = await _authService.LoginAsync<APIResponse>(requestobj);
                 if (result != null && result.IsSuccess)
                 {
-                    return RedirectToAction("Login");
+                    LoginResponceDto model = JsonConvert.DeserializeObject<LoginResponceDto>(Convert.ToString(result.Result));
+
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwt = handler.ReadJwtToken(model.AccessToken);
+
+                    var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
+                    var principal = new ClaimsPrincipal(identity);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                    _authService.SetToken(model.AccessToken);
+                    return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception e)
             {
-
+                return View("Register");
             }
 
             return View("Register");

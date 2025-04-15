@@ -1,0 +1,41 @@
+﻿@model List<FileDetailsModel>
+@{
+    ViewData["Title"] = "Upload CSV File";
+}
+<partial name="_notification"/>
+<h1 class="text-black">@ViewData["Title"]</h1>
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <input class="text-black" type="file" name="files" multiple />
+    <button type="submit" class="btn btn-success">Upload</button>
+</form>
+<div>
+    <h2>User Table</h2>
+    @if (Model?.Any() == true)
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>FileName</th>
+                    <th>status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.FileName</td>
+                        <td>@item.status</td>
+                        <td>@item.Action</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No products added yet.</p>
+    }
+</div>
