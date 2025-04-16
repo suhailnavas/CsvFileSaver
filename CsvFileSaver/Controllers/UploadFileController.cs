@@ -54,9 +54,12 @@ namespace CsvFileSaver.Controllers
                     {
                         FileName = item.FileName,
                         ContentType = item.ContentType,
-                        Content = memoryStream.ToArray()
+                        Content = memoryStream.ToArray(),
+                        status = Constants.Status.Not_Updated.ToString(),
+                        IsUpdated = false
                     };
-                    APIResponse result = await _fileService.SedAsync<APIResponse>(newDocument);
+                    var token = HttpContext.Session.GetString(Constants.SessionToken);
+                    APIResponse result = await _fileService.SedAsync<APIResponse>(newDocument, token);
                     if (result != null && result.IsSuccess)
                     {
                         return RedirectToAction("UploadFile");
@@ -70,7 +73,8 @@ namespace CsvFileSaver.Controllers
             return RedirectToAction("UploadFile"); // Refresh list
         }
 
-        public IActionResult ShowTable()
+        [HttpPost("UpdateRecords")]
+        public IActionResult UpdateRecords(FileDetailsModel selectedFile)
         {          
             return View();
         }

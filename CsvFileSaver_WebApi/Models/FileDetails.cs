@@ -14,6 +14,10 @@ namespace CsvFileSaver_WebApi.Models
         public byte[] Content { get; set; }
         [Required]
         public string ContentType { get; set; }
+        [Required]
+        public string status { get; set; }
+        [Required]
+        public bool IsUpdated { get; set; }
     }
 
 }

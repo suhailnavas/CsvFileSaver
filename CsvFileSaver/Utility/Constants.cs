@@ -10,6 +10,13 @@
             DELETE,
         }
 
+        public enum Status
+        {
+            Not_Updated,
+            Processing,
+            Completed,
+        }
+
         public static string SessionToken = "JWTToken";
         public static string AccessToken = "JWTToken";
         public static string RefreshToken = "RefreshToken";

@@ -1,6 +1,7 @@
 ﻿using CsvFileSaver.Models;
 using CsvFileSaver.Service.IService;
 using CsvFileSaver.Utility;
+using Newtonsoft.Json.Linq;
 
 namespace CsvFileSaver.Service
 {
@@ -27,14 +28,15 @@ namespace CsvFileSaver.Service
             },true);
         }
 
-        public Task<T> SedAsync<T>(object obj)
+        public Task<T> SedAsync<T>(object obj, string token)
         {
             return _baseService.SendAsync<T>(new APIRequest()
             {
                 ApiType = Constants.ApiType.POST,
                 Data = obj,
-                Url = builderUrl + Constants.PostFileEndPoint
-            });
+                Url = builderUrl + Constants.PostFileEndPoint,
+                Token = token
+            },true);
         }
     }
 }

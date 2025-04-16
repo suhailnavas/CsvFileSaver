@@ -43,7 +43,9 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                     {
                         FileName = file.FileName,
                         ContentType = file.ContentType,
-                        Content = file.Content
+                        Content = file.Content,
+                        status = file.status,
+                        IsUpdated = file.IsUpdated
                     };
 
                     var responce = await _fileRepo.FileDetailsUpload(csvFile);

@@ -27,6 +27,8 @@ namespace CsvFileSaver_WebApi.Repository
                 FileName = fileDetails.FileName,
                 Content = fileDetails.Content,
                 ContentType = fileDetails.ContentType,
+                status = fileDetails.status,
+                IsUpdated =fileDetails.IsUpdated
             };
             _db.UploadFileDetails.Add(newFileDetails);
             await _db.SaveChangesAsync();
