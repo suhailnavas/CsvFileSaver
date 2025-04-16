@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CsvFileSaver.Utility;
 
 namespace CsvFileSaver.Controllers
 {
@@ -78,6 +79,7 @@ namespace CsvFileSaver.Controllers
                     identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                    HttpContext.Session.SetString(Constants.SessionToken, model.AccessToken);
                     _authService.SetToken(model.AccessToken);
                     return RedirectToAction("Index", "Home");
                 }

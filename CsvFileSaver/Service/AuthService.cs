@@ -40,7 +40,7 @@ namespace CsvFileSaver.Service
         public void SetToken(string accessToken)
         {
             var cookieOptions = new CookieOptions { Expires = DateTime.UtcNow.AddMinutes(30) };
-            _contextAccessor.HttpContext?.Response.Cookies.Append("JWTToken", accessToken, cookieOptions);
+            _contextAccessor.HttpContext?.Response.Cookies.Append("JWTToken", accessToken);
         }
     }
 }

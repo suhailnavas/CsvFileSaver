@@ -3,6 +3,7 @@ using CsvFileSaver_WebApi.Model;
 using CsvFileSaver_WebApi.Models.Dto;
 using CsvFileSaver_WebApi.Repository.IRepository;
 using CsvFileSaver_WebApi.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,6 +12,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
     [Route(Constants.FileUploadControllerRute)]
     [ApiController]
     [ApiVersion(Constants.ApiVersionOnePointZero)]
+    [Authorize]
     public class FileUploadController : Controller
     {
         private readonly APIResponse _response;
@@ -27,25 +29,21 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPost("FileUploade")]
-        public async Task<ActionResult<APIResponse>> FileUpload(IFormFile file)
+        public async Task<ActionResult<APIResponse>> FileUpload(FileDetailsDto file)
         {
             try
             {
-                if (file == null || file.Length == 0)
+                if (file == null)
                 {
                     return BadRequest();
                 }
                 else
                 {
-
-                    using var memoryStream = new MemoryStream();
-                    await file.CopyToAsync(memoryStream);
-
                     var csvFile = new FileDetailsDto
                     {
                         FileName = file.FileName,
                         ContentType = file.ContentType,
-                        Content = memoryStream.ToArray()
+                        Content = file.Content
                     };
 
                     var responce = await _fileRepo.FileDetailsUpload(csvFile);

@@ -4,7 +4,7 @@ using CsvFileSaver.Utility;
 
 namespace CsvFileSaver.Service
 {
-    public class FileServices
+    public class FileServices : IFileServices
     {
 
         private readonly IBaseService _baseService;
@@ -17,13 +17,23 @@ namespace CsvFileSaver.Service
             _contextAccessor = contextAccessor;
         }
 
-        public Task<T> LoginAsync<T>(object obj)
+        public async Task<T> GetAllAsync<T>(string token)
+        {
+            return await _baseService.SendAsync<T>(new APIRequest()
+            {
+                ApiType = Constants.ApiType.GET,
+                Url = builderUrl + Constants.GetFileRequestEndPoint,
+                Token = token
+            },true);
+        }
+
+        public Task<T> SedAsync<T>(object obj)
         {
             return _baseService.SendAsync<T>(new APIRequest()
             {
                 ApiType = Constants.ApiType.POST,
                 Data = obj,
-                Url = builderUrl + Constants.LoginRequestEndPoint
+                Url = builderUrl + Constants.PostFileEndPoint
             });
         }
     }

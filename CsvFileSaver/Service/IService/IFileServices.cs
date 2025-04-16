@@ -2,6 +2,7 @@
 {
     public interface IFileServices
     {
-        Task<T> SedAsync<T>(object objTologin);
+        Task<T> SedAsync<T>(object obj);
+        Task<T> GetAllAsync<T>(string token);
     }
 }
