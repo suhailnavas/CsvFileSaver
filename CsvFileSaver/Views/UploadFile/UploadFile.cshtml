@@ -1,0 +1,76 @@
+﻿@model List<FileDetailsModel>
+@{
+    ViewData["Title"] = "Upload CSV File";
+}
+<div id="loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; text-align:center;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <img src="~/images/Spinner.gif" alt="Loading..." />
+    </div>
+    </div>
+
+<partial name="_notification"/>
+<h1 class="text-black">@ViewData["Title"]</h1>
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <input class="text-black" type="file" name="files" multiple />
+    <button type="submit" class="btn btn-success">Upload</button>
+</form>
+<div>
+    <h2>User Table</h2>
+    @if (Model?.Any() == true)
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>FileName</th>
+                    <th>status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                   <tr>
+                        <td>@item.Id</td>
+                        <td>@item.FileName</td>
+                        <td>@item.status</td>
+                        <td>
+                            @if (!item.IsUpdated)
+                            {
+                                <form asp-controller="UploadFile" asp-action="UploadRecords" method="post">
+                                    <input type="hidden" name="Id" value="@item.Id" />
+                                    <input type="hidden" name="FileName" value="@item.FileName" />
+                                    <input type="hidden" name="Status" value="@item.status" />
+                                    <input type="hidden" name="IsUpdated" value="@item.IsUpdated" />
+                                    <input type="hidden" name="ContentType" value="@item.ContentType" />
+                                    <input type="hidden" name="Content" value="@item.Content" />
+                                    <input type="hidden" name="Base64Content" value="@Convert.ToBase64String(item.Content)" />
+
+                                    <button type="submit" class="btn btn-outline-success">Update Records</button>
+                                </form>                             
+                            }
+                            else
+                            {
+                                <p class="text-success">Completed</p>
+                            }
+                        </td>
+                   </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No products added yet.</p>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("form").on("submit", function () {
+                $("#loader").show();
+            });
+        });
+    </script>
+}

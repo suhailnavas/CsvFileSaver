@@ -9,11 +9,12 @@ namespace CsvFileSaver.Service
     {
         private readonly IBaseService _baseService;
         private string builderUrl;
-        public AuthService(IConfiguration configuration, IBaseService baseService)
+        private IHttpContextAccessor _contextAccessor;
+        public AuthService(IConfiguration configuration, IBaseService baseService, IHttpContextAccessor contextAccessor)
         {
             _baseService = baseService;
             builderUrl = configuration.GetValue<string>(Constants.CsvFileSaverServiceUrl);
-
+            _contextAccessor = contextAccessor;
         }
 
         public Task<T> LoginAsync<T>(LoginRequestDto obj)
@@ -34,6 +35,12 @@ namespace CsvFileSaver.Service
                 Data = obj,
                 Url = builderUrl + Constants.LoginRegisterEndPoint
             });
+        }
+
+        public void SetToken(string accessToken)
+        {
+            var cookieOptions = new CookieOptions { Expires = DateTime.UtcNow.AddMinutes(30) };
+            _contextAccessor.HttpContext?.Response.Cookies.Append("JWTToken", accessToken);
         }
     }
 }

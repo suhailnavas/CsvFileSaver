@@ -2,6 +2,8 @@
 using CsvFileSaver.Service.IService;
 using CsvFileSaver.Utility;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Text;
 
 namespace CsvFileSaver.Service
@@ -16,7 +18,7 @@ namespace CsvFileSaver.Service
             HttpClient = httpClient;
         }
 
-        public async Task<T> SendAsync<T>(APIRequest apiRequest)
+        public async Task<T> SendAsync<T>(APIRequest apiRequest,bool isTokenRequired =false)
         {
             try
             {
@@ -47,7 +49,11 @@ namespace CsvFileSaver.Service
                 }
 
                 HttpResponseMessage apiResponce = null;
-                apiResponce = await client.SendAsync(message);
+                if(isTokenRequired)
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiRequest.Token);
+                }
+                apiResponce = await client.SendAsync(message);                              
                 var apiContent = await apiResponce.Content.ReadAsStringAsync();
                 var APIResponce = JsonConvert.DeserializeObject<T>(apiContent);
                 return APIResponce;
