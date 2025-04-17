@@ -14,5 +14,6 @@ namespace CsvFileSaver_WebApi.Data
         //public DbSet<Login> LoginUserDetails { get; set; }       
         public DbSet<RegisterationRequest> UserDetails { get; set; }       
         public DbSet<FileDetails> UploadFileDetails { get; set; }       
+        public DbSet<CsvEmployeeRecord> CsvEmployeeRecords { get; set; }       
     }
 }

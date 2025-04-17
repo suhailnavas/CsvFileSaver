@@ -11,6 +11,7 @@ namespace CsvFileSaver_WebApi
             CreateMap<LoginDto,Login>().ReverseMap();
             CreateMap<RegisterationRequestDTO,RegisterationRequest>().ReverseMap();
             CreateMap<FileDetails,FileDetailsDto>().ReverseMap();
+            CreateMap<CsvEmployeeRecordDto, CsvEmployeeRecord>().ReverseMap();
         }
     }
 }

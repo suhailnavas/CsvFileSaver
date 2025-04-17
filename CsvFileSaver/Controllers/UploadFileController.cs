@@ -1,10 +1,17 @@
-﻿using CsvFileSaver.Models;
+﻿using AutoMapper;
+using CsvFileSaver.Models;
+using CsvFileSaver.Models.Dto;
 using CsvFileSaver.Service;
 using CsvFileSaver.Service.IService;
 using CsvFileSaver.Utility;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Formats.Asn1;
+using System.Globalization;
 using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CsvFileSaver.Controllers
@@ -12,9 +19,11 @@ namespace CsvFileSaver.Controllers
     public class UploadFileController : Controller
     {
         private readonly IFileServices _fileService;
-        public UploadFileController(IFileServices fileService)
+        private readonly IMapper _mapper;
+        public UploadFileController(IMapper mapper,IFileServices fileService)
         {
             _fileService = fileService;
+            _mapper = mapper;
         }
         public async Task<IActionResult> UploadFile()
         {                        
@@ -31,7 +40,6 @@ namespace CsvFileSaver.Controllers
                 list = JsonConvert.DeserializeObject<List<FileDetailsModel>>(Convert.ToString(response.Result));
             }
             return list;
-
         }
 
         [HttpPost]
@@ -73,10 +81,39 @@ namespace CsvFileSaver.Controllers
             return RedirectToAction("UploadFile"); // Refresh list
         }
 
-        [HttpPost("UpdateRecords")]
-        public IActionResult UpdateRecords(FileDetailsModel selectedFile)
-        {          
-            return View();
+        [HttpPost("UploadRecords")]
+        public async Task<IActionResult> UploadRecords(FileDetailsModel selectedFile)
+        {
+            selectedFile.Content = Convert.FromBase64String(selectedFile.Base64Content);
+            var recordList = ReadCsvFromBytes(selectedFile.Content);
+            var postRequest = new FilesAndRecordsDto
+            {
+                FileDetails = _mapper.Map<FileDetailsDto>(selectedFile),
+                RecordsDetails =_mapper.Map<List<CsvEmployeeRecordDto>>(recordList)
+            };
+            var token = HttpContext.Session.GetString(Constants.SessionToken);
+            APIResponse result = await _fileService.SedRecorsAsync<APIResponse>(postRequest, token);
+            if (result != null && result.IsSuccess)
+            {
+                return RedirectToAction("UploadFile");
+            }
+            return RedirectToAction("UploadFile");
+        }
+
+        public List<CsvEmployeeRecord> ReadCsvFromBytes(byte[] fileBytes)
+        {
+            using var stream = new MemoryStream(fileBytes);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = true
+            };
+
+            using var csv = new CsvReader(reader, csvConfig);
+            var records = csv.GetRecords<CsvEmployeeRecord>().ToList();
+
+            
+            return records;
         }
     }
 }

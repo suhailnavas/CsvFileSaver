@@ -7,7 +7,6 @@ namespace CsvFileSaver.Service
 {
     public class FileServices : IFileServices
     {
-
         private readonly IBaseService _baseService;
         private string builderUrl;
         private IHttpContextAccessor _contextAccessor;
@@ -37,6 +36,17 @@ namespace CsvFileSaver.Service
                 Url = builderUrl + Constants.PostFileEndPoint,
                 Token = token
             },true);
+        }
+
+        public Task<T> SedRecorsAsync<T>(object obj, string token)
+        {
+            return _baseService.SendAsync<T>(new APIRequest()
+            {
+                ApiType = Constants.ApiType.POST,
+                Data = obj,
+                Url = builderUrl + Constants.UploadRecordsEndPoint,
+                Token = token
+            }, true);
         }
     }
 }

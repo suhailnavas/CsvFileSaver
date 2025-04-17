@@ -34,10 +34,43 @@ namespace CsvFileSaver_WebApi.Repository
             await _db.SaveChangesAsync();
             return fileDetails;
         }
+        
+        public async Task<List<CsvEmployeeRecord>> UploadRecords(List<CsvEmployeeRecord> recordDetails)
+        {
+            //_db.CsvEmployeeRecords.AddRange(recordDetails);
+            //await _db.SaveChangesAsync();
+
+            var batchSize = 1000;  // Insert records in batches of 1000
+            for (int i = 0; i < recordDetails.Count; i += batchSize)
+            {
+                var batch = recordDetails.Skip(i).Take(batchSize).ToList();
+                _db.CsvEmployeeRecords.AddRange(batch);
+                await _db.SaveChangesAsync();
+            }
+            return recordDetails;
+        }
+
+
 
         public async Task<List<FileDetails>> GetFileDetails()
         {
             return await _db.UploadFileDetails.ToListAsync();
+        }
+
+        public async Task<FileDetailsDto> UpdateFileDetails(FileDetailsDto fileDetails)
+        {
+            FileDetails newFileDetails = new()
+            {
+                Id = fileDetails.Id,
+                FileName = fileDetails.FileName,
+                Content = fileDetails.Content,
+                ContentType = fileDetails.ContentType,
+                status = fileDetails.status,
+                IsUpdated = fileDetails.IsUpdated
+            };
+            _db.UploadFileDetails.Update(newFileDetails);
+            await _db.SaveChangesAsync();
+            return fileDetails;
         }
     }
 }

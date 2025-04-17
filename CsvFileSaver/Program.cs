@@ -3,6 +3,7 @@ using CsvFileSaver.Service.IService;
 using CsvFileSaver.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CsvFileSaver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 //builder.Services.AddScoped<IBaseService, BaseService>();
 //builder.Services.AddIdentity<Users, IdentityRole>(options =>
 //{

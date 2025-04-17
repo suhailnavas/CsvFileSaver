@@ -29,6 +29,7 @@
         public static string LoginRequestEndPoint = "api/v1/Login/Login";
         public static string GetFileRequestEndPoint = "api/v1/FileUpload/GetFiles";
         public static string PostFileEndPoint = "api/v1/FileUpload/FileUploade";
+        public static string UploadRecordsEndPoint = "api/v1/FileUpload/UploadRecords";
 
         public enum ContentType
         {
