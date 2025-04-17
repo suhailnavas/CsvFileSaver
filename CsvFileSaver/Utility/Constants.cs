@@ -10,16 +10,10 @@
             DELETE,
         }
 
-        public enum Status
-        {
-            Not_Updated,
-            Processing,
-            Completed,
-        }
-
         public static string SessionToken = "JWTToken";
         public static string AccessToken = "JWTToken";
         public static string RefreshToken = "RefreshToken";
+        public static string FileUploaded = "File uploaded";
 
         //Base Url connection String
         public static string CsvFileSaverServiceUrl = "ServiceUrls:CsvFileSaverAPI";

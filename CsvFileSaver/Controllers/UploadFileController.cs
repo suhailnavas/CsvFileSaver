@@ -45,59 +45,85 @@ namespace CsvFileSaver.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(List<IFormFile> files)
         {
-            foreach (var item in files)
+            try
             {
-                if (item.Length > 0 && Path.GetExtension(item.FileName).ToLower() == ".csv")
+                foreach (var item in files)
                 {
-                    //You can optionally save to disk here
-                    using var content = new MultipartFormDataContent();
-                    using var streamContent = new StreamContent(item.OpenReadStream());
-                    streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv");
-                    content.Add(streamContent, "file", item.FileName);
-
-                    using var memoryStream = new MemoryStream();
-                    await item.CopyToAsync(memoryStream);
-
-                    FileDetailsModel newDocument = new FileDetailsModel
+                    if (item.Length > 0 && Path.GetExtension(item.FileName).ToLower() == ".csv")
                     {
-                        FileName = item.FileName,
-                        ContentType = item.ContentType,
-                        Content = memoryStream.ToArray(),
-                        status = Constants.Status.Not_Updated.ToString(),
-                        IsUpdated = false
-                    };
-                    var token = HttpContext.Session.GetString(Constants.SessionToken);
-                    APIResponse result = await _fileService.SedAsync<APIResponse>(newDocument, token);
-                    if (result != null && result.IsSuccess)
+                        //You can optionally save to disk here
+                        using var content = new MultipartFormDataContent();
+                        using var streamContent = new StreamContent(item.OpenReadStream());
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/csv");
+                        content.Add(streamContent, "file", item.FileName);
+
+                        using var memoryStream = new MemoryStream();
+                        await item.CopyToAsync(memoryStream);
+
+                        FileDetailsModel newDocument = new FileDetailsModel
+                        {
+                            FileName = item.FileName,
+                            ContentType = item.ContentType,
+                            Content = memoryStream.ToArray(),
+                            status = Constants.FileUploaded,
+                            IsUpdated = false
+                        };
+                        var token = HttpContext.Session.GetString(Constants.SessionToken);
+                        APIResponse result = await _fileService.SedAsync<APIResponse>(newDocument, token);
+                        if (result != null && result.IsSuccess)
+                        {
+                            return RedirectToAction("UploadFile");
+                        }
+                    }
+                    else
                     {
-                        return RedirectToAction("UploadFile");
+                        TempData["message"] = "Invalid document. Please upload a valid CSV file";
                     }
                 }
-                else
-                {
-                    TempData["message"] = "Please select CSV file";
-                }
+                return RedirectToAction("UploadFile"); // Refresh list
             }
-            return RedirectToAction("UploadFile"); // Refresh list
+            catch(NullReferenceException)
+            {
+                TempData["message"] = "Invalid document. Please upload a valid CSV file";
+                return RedirectToAction("UploadFile");
+            }
+            catch(Exception e)
+            {
+                TempData["message"] = e.GetType().ToString();
+                return RedirectToAction("UploadFile");
+            }
         }
 
         [HttpPost("UploadRecords")]
         public async Task<IActionResult> UploadRecords(FileDetailsModel selectedFile)
         {
-            selectedFile.Content = Convert.FromBase64String(selectedFile.Base64Content);
-            var recordList = ReadCsvFromBytes(selectedFile.Content);
-            var postRequest = new FilesAndRecordsDto
+            try
             {
-                FileDetails = _mapper.Map<FileDetailsDto>(selectedFile),
-                RecordsDetails =_mapper.Map<List<CsvEmployeeRecordDto>>(recordList)
-            };
-            var token = HttpContext.Session.GetString(Constants.SessionToken);
-            APIResponse result = await _fileService.SedRecorsAsync<APIResponse>(postRequest, token);
-            if (result != null && result.IsSuccess)
-            {
+                selectedFile.Content = Convert.FromBase64String(selectedFile.Base64Content);
+                var recordList = ReadCsvFromBytes(selectedFile.Content);
+                var postRequest = new FilesAndRecordsDto
+                {
+                    FileDetails = _mapper.Map<FileDetailsDto>(selectedFile),
+                    RecordsDetails = _mapper.Map<List<CsvEmployeeRecordDto>>(recordList)
+                };
+                var token = HttpContext.Session.GetString(Constants.SessionToken);
+                APIResponse result = await _fileService.SedRecorsAsync<APIResponse>(postRequest, token);
+                if (result != null && result.IsSuccess)
+                {
+                    return RedirectToAction("UploadFile");
+                }
                 return RedirectToAction("UploadFile");
             }
-            return RedirectToAction("UploadFile");
+            catch(HeaderValidationException)
+            {
+                TempData["message"] = "Please check the employee data format in the document.";
+                return RedirectToAction("UploadFile");
+            }
+            catch(Exception e)
+            {
+                TempData["message"] = e.GetType().ToString();
+                return RedirectToAction("UploadFile");
+            }
         }
 
         public List<CsvEmployeeRecord> ReadCsvFromBytes(byte[] fileBytes)

@@ -141,7 +141,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                     }
                     else
                     {
-                        filesAndRecords.FileDetails.status = "Update Completed";
+                        filesAndRecords.FileDetails.status = Constants.RecordsUplaoded;
                         filesAndRecords.FileDetails.IsUpdated = true;
                         var fileResponce = await UpdateFileStatus(filesAndRecords.FileDetails);
                         if(_response.IsSuccess)

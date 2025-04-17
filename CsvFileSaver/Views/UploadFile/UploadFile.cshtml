@@ -23,7 +23,7 @@
                 <tr>
                     <th>ID</th>
                     <th>FileName</th>
-                    <th>status</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -46,12 +46,12 @@
                                     <input type="hidden" name="Content" value="@item.Content" />
                                     <input type="hidden" name="Base64Content" value="@Convert.ToBase64String(item.Content)" />
 
-                                    <button type="submit" class="btn btn-outline-success">Update Records</button>
+                                    <button type="submit" class="btn btn-outline-success">Upload Records</button>
                                 </form>                             
                             }
                             else
                             {
-                                <p class="text-success">Completed</p>
+                                <p class="text-success">Upload Completed</p>
                             }
                         </td>
                    </tr>

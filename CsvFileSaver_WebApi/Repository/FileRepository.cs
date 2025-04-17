@@ -40,7 +40,7 @@ namespace CsvFileSaver_WebApi.Repository
             //_db.CsvEmployeeRecords.AddRange(recordDetails);
             //await _db.SaveChangesAsync();
 
-            var batchSize = 1000;  // Insert records in batches of 1000
+            var batchSize = 10000;  // Insert records in batches of 1000
             for (int i = 0; i < recordDetails.Count; i += batchSize)
             {
                 var batch = recordDetails.Skip(i).Take(batchSize).ToList();

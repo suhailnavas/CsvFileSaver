@@ -18,6 +18,8 @@ namespace CsvFileSaver_WebApi.Models
         public string status { get; set; }
         [Required]
         public bool IsUpdated { get; set; }
+        [Required]
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 
 }
