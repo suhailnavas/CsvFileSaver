@@ -75,8 +75,10 @@ namespace CsvFileSaver_WebApi.Repository
 
             LoginResponceDto response = new LoginResponceDto
             {
+                Id = user.UserId,
                 Email = user.Email,
                 Name = user.Name,
+                Role = user.Role,
                 AccessToken = accesToken
             };
 
@@ -91,6 +93,7 @@ namespace CsvFileSaver_WebApi.Repository
                 Name = registerationRequestDTO.Name,
                 Email = registerationRequestDTO.Email,
                 Password = registerationRequestDTO.Password,
+                Role = registerationRequestDTO.Role,
             };
             _db.UserDetails.Add(user);
             await _db.SaveChangesAsync();

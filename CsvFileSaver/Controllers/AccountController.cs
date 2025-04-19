@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using CsvFileSaver.Utility;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CsvFileSaver.Controllers
 {
@@ -22,12 +23,21 @@ namespace CsvFileSaver.Controllers
         }
         public async Task<IActionResult> Login()
         {
+            
             return View();
         }
 
         public IActionResult Register()
         {
-            return View();
+            var model = new RegisterViewModel
+            {
+                Roles = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "User", Text = "User" },
+                    new SelectListItem { Value = "Admin", Text = "Administrator" },                   
+                }
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -38,7 +48,8 @@ namespace CsvFileSaver.Controllers
                 {
                     Name = obj.Name,
                     Email = obj.Email,
-                    Password = obj.Password
+                    Password = obj.Password,
+                    Role =obj.SelectedRole                   
                 };
 
                 APIResponse result = await _authService.RegisterAsync<APIResponse>(Registerobj);
@@ -64,7 +75,8 @@ namespace CsvFileSaver.Controllers
                 LoginRequestDto requestobj = new LoginRequestDto
                 {
                     Email = obj.Email,
-                    Password = obj.Password
+                    Password = obj.Password,
+                    Role = string.Empty
                 };
 
                 APIResponse result = await _authService.LoginAsync<APIResponse>(requestobj);
@@ -73,13 +85,16 @@ namespace CsvFileSaver.Controllers
                     LoginResponceDto model = JsonConvert.DeserializeObject<LoginResponceDto>(Convert.ToString(result.Result));
 
                     var handler = new JwtSecurityTokenHandler();
-                    var jwt = handler.ReadJwtToken(model.AccessToken);
+                    var jwt = handler.ReadJwtToken(model?.AccessToken);
 
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
                     identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
                     HttpContext.Session.SetString(Constants.SessionToken, model.AccessToken);
+                    HttpContext.Session.SetString(Constants.UserName, model.Name);
+                    HttpContext.Session.SetString(Constants.UserId, model.Id);
+                    HttpContext.Session.SetString(Constants.UserRole, model.Role);
                     _authService.SetToken(model.AccessToken);
                     return RedirectToAction("Index", "Home");
                 }

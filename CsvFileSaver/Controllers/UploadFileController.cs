@@ -26,15 +26,18 @@ namespace CsvFileSaver.Controllers
             _mapper = mapper;
         }
         public async Task<IActionResult> UploadFile()
-        {                        
-            return View( await GetFileData());
+        {
+            var userRole = HttpContext.Session.GetString(Constants.UserRole);
+            var userId = HttpContext.Session.GetString(Constants.UserId);
+            var token = HttpContext.Session.GetString(Constants.SessionToken);
+            return View( await GetFileData(token, userId, userRole));
         }
 
         [HttpGet]
-        private async Task<List<FileDetailsModel>> GetFileData()
+        private async Task<List<FileDetailsModel>> GetFileData(string token,string userId, string userRole)
         {
             List<FileDetailsModel> list = new();
-            var response = await _fileService.GetAllAsync<APIResponse>(HttpContext.Session.GetString(Constants.SessionToken)); 
+            var response = await _fileService.GetAllAsync<APIResponse>(token, userId, userRole); 
             if (response != null && response.IsSuccess)
             {
                 list = JsonConvert.DeserializeObject<List<FileDetailsModel>>(Convert.ToString(response.Result));
@@ -63,6 +66,8 @@ namespace CsvFileSaver.Controllers
                         FileDetailsModel newDocument = new FileDetailsModel
                         {
                             FileName = item.FileName,
+                            UserName = HttpContext.Session.GetString(Constants.UserName),
+                            UserId = int.Parse(HttpContext.Session.GetString(Constants.UserId)),
                             ContentType = item.ContentType,
                             Content = memoryStream.ToArray(),
                             status = Constants.FileUploaded,

@@ -17,14 +17,16 @@ namespace CsvFileSaver.Service
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<T> GetAllAsync<T>(string token)
+        public async Task<T> GetAllAsync<T>(string token,string userId, string UserRole)
         {
-            return await _baseService.SendAsync<T>(new APIRequest()
+            var ner = new APIRequest()
             {
                 ApiType = Constants.ApiType.GET,
-                Url = builderUrl + Constants.GetFileRequestEndPoint,
+                Url = builderUrl + Constants.GetFileRequestEndPoint + string.Format(Constants.GetFileParams, UserRole, userId),
                 Token = token
-            },true);
+            };
+
+            return await _baseService.SendAsync<T>(ner, true);
         }
 
         public Task<T> SedAsync<T>(object obj, string token)

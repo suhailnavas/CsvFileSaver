@@ -23,6 +23,11 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
+                    <label asp-for="SelectedRole" class="form-label"></label>
+                    <select asp-for="SelectedRole" asp-items="Model.Roles" class="form-control"></select>
+                    <span asp-validation-for="SelectedRole" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
                     <label asp-for="Password" class="form-label"></label>
                     <input asp-for="Password" class="form-control" />
                     <span asp-validation-for="Password" class="text-danger"></span>

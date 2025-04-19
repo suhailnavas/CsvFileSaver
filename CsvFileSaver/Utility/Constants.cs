@@ -1,4 +1,6 @@
-﻿namespace CsvFileSaver.Utility
+﻿using System.Data;
+
+namespace CsvFileSaver.Utility
 {
     public static class Constants
     {
@@ -14,6 +16,10 @@
         public static string AccessToken = "JWTToken";
         public static string RefreshToken = "RefreshToken";
         public static string FileUploaded = "File uploaded";
+        public static string UserRole = "UserRole";
+        public static string UserName = "UserName";
+        public static string UserId = "UserId";
+        public static string Admin = "Admin";
 
         //Base Url connection String
         public static string CsvFileSaverServiceUrl = "ServiceUrls:CsvFileSaverAPI";
@@ -24,6 +30,7 @@
         public static string GetFileRequestEndPoint = "api/v1/FileUpload/GetFiles";
         public static string PostFileEndPoint = "api/v1/FileUpload/FileUploade";
         public static string UploadRecordsEndPoint = "api/v1/FileUpload/UploadRecords";
+        public static string GetFileParams = "?role={0}&userId={1}";
 
         public enum ContentType
         {

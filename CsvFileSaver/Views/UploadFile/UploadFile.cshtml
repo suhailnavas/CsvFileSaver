@@ -1,12 +1,15 @@
 ﻿@model List<FileDetailsModel>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using CsvFileSaver.Utility
 @{
     ViewData["Title"] = "Upload CSV File";
+    var IsAdmin = (HttpContextAccessor.HttpContext.Session.GetString(Constants.UserRole) == Constants.Admin);
 }
 <div id="loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; text-align:center;">
     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <img src="~/images/Spinner.gif" alt="Loading..." />
     </div>
-    </div>
+</div>
 
 <partial name="_notification"/>
 <h1 class="text-black">@ViewData["Title"]</h1>
@@ -22,6 +25,10 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    @if (IsAdmin)
+                    {
+                        <th>User Name</th>
+                    }         
                     <th>FileName</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -30,8 +37,12 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                   <tr>
+                    <tr>
                         <td>@item.Id</td>
+                        @if (IsAdmin)
+                        {
+                            <td>@item.UserName</td>
+                        }
                         <td>@item.FileName</td>
                         <td>@item.status</td>
                         <td>
@@ -39,6 +50,9 @@
                             {
                                 <form asp-controller="UploadFile" asp-action="UploadRecords" method="post">
                                     <input type="hidden" name="Id" value="@item.Id" />
+                                    <input type="hidden" name="FileName" value="@item.FileName" />
+                                    <input type="hidden" name="UserName" value="@item.UserName" />
+                                    <input type="hidden" name="UserId" value="@item.UserId" />
                                     <input type="hidden" name="FileName" value="@item.FileName" />
                                     <input type="hidden" name="Status" value="@item.status" />
                                     <input type="hidden" name="IsUpdated" value="@item.IsUpdated" />
