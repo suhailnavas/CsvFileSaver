@@ -18,5 +18,7 @@ namespace CsvFileSaver_WebApi.Models
         public string Department { get; set; }
         [Required]
         public double Salary { get; set; }
+        [Required]
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 }

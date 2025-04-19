@@ -3,6 +3,7 @@ using CsvFileSaver_WebApi.Data;
 using CsvFileSaver_WebApi.Models;
 using CsvFileSaver_WebApi.Models.Dto;
 using CsvFileSaver_WebApi.Repository.IRepository;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CsvFileSaver_WebApi.Repository
@@ -25,6 +26,8 @@ namespace CsvFileSaver_WebApi.Repository
             FileDetails newFileDetails = new()
             {
                 FileName = fileDetails.FileName,
+                UserId = fileDetails.UserId,
+                UserName =fileDetails.UserName,
                 Content = fileDetails.Content,
                 ContentType = fileDetails.ContentType,
                 status = fileDetails.status,
@@ -40,21 +43,27 @@ namespace CsvFileSaver_WebApi.Repository
             //_db.CsvEmployeeRecords.AddRange(recordDetails);
             //await _db.SaveChangesAsync();
 
-            var batchSize = 1000;  // Insert records in batches of 1000
+            var batchSize = 10000;  // Insert records in batches of 1000
             for (int i = 0; i < recordDetails.Count; i += batchSize)
             {
+                //var batch = recordDetails.Skip(i).Take(batchSize).ToList();
+                //_db.CsvEmployeeRecords.AddRange(batch);
+                //await _db.SaveChangesAsync();
+
                 var batch = recordDetails.Skip(i).Take(batchSize).ToList();
-                _db.CsvEmployeeRecords.AddRange(batch);
-                await _db.SaveChangesAsync();
+                await _db.BulkInsertAsync(batch);
             }
             return recordDetails;
         }
 
-
-
-        public async Task<List<FileDetails>> GetFileDetails()
+        public async Task<List<FileDetails>> GetFileDetails(string role, string userId)
         {
-            return await _db.UploadFileDetails.ToListAsync();
+            if(role == "Admin")
+                return await _db.UploadFileDetails.ToListAsync();
+            else
+            {
+                return await _db.UploadFileDetails.Where(p => p.UserId == int.Parse(userId)).ToListAsync();
+            }               
         }
 
         public async Task<FileDetailsDto> UpdateFileDetails(FileDetailsDto fileDetails)
@@ -62,6 +71,8 @@ namespace CsvFileSaver_WebApi.Repository
             FileDetails newFileDetails = new()
             {
                 Id = fileDetails.Id,
+                UserId =fileDetails.UserId,
+                UserName =fileDetails.UserName,
                 FileName = fileDetails.FileName,
                 Content = fileDetails.Content,
                 ContentType = fileDetails.ContentType,

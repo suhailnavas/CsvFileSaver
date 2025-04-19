@@ -6,8 +6,8 @@
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
-<div>
-    <div class="account-container">
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="account-container" style="width:500px; height:500px">
         <div class="account-box">
             <h2 class="text-center mb-4">Register</h2>
             <form asp-controller="Account" asp-action="ButtonRegister" method="post">
@@ -21,6 +21,11 @@
                     <label asp-for="Email" class="form-label"></label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SelectedRole" class="form-label"></label>
+                    <select asp-for="SelectedRole" asp-items="Model.Roles" class="form-control"></select>
+                    <span asp-validation-for="SelectedRole" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="Password" class="form-label"></label>

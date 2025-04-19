@@ -9,6 +9,7 @@ using CsvFileSaver_WebApi.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Data;
 using System.Net;
 
 namespace CsvFileSaver_WebApi.Controllers.V1
@@ -46,6 +47,8 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                     var csvFile = new FileDetailsDto
                     {
                         FileName = file.FileName,
+                        UserName = file.UserName,
+                        UserId =file.UserId,
                         ContentType = file.ContentType,
                         Content = file.Content,
                         status = file.status,
@@ -83,12 +86,11 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("GetFiles")]
-        public async Task<ActionResult<APIResponse>> GetFiles()
+        public async Task<ActionResult<APIResponse>> GetFiles([FromQuery] string role, [FromQuery]string userId)
         {
             try
             {
-
-                    var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails());
+                    var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails(role, userId));
                     if (responce == null)
                     {
                         _response.IsSuccess = false;
@@ -141,7 +143,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                     }
                     else
                     {
-                        filesAndRecords.FileDetails.status = "Update Completed";
+                        filesAndRecords.FileDetails.status = Constants.RecordsUplaoded;
                         filesAndRecords.FileDetails.IsUpdated = true;
                         var fileResponce = await UpdateFileStatus(filesAndRecords.FileDetails);
                         if(_response.IsSuccess)
@@ -177,6 +179,8 @@ namespace CsvFileSaver_WebApi.Controllers.V1
             var csvFile = new FileDetailsDto
             {
                 Id = file.Id,
+                UserId =file.UserId,
+                UserName = file.UserName,
                 FileName = file.FileName,
                 ContentType = file.ContentType,
                 Content = file.Content,
