@@ -20,10 +20,12 @@ namespace CsvFileSaver.Controllers
     {
         private readonly IFileServices _fileService;
         private readonly IMapper _mapper;
-        public UploadFileController(IMapper mapper,IFileServices fileService)
+        private readonly ILogger<UploadFileController> _logger;
+        public UploadFileController(IMapper mapper,IFileServices fileService,ILogger<UploadFileController> logger)
         {
             _fileService = fileService;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<IActionResult> UploadFile()
         {
@@ -36,13 +38,21 @@ namespace CsvFileSaver.Controllers
         [HttpGet]
         private async Task<List<FileDetailsModel>> GetFileData(string token,string userId, string userRole)
         {
-            List<FileDetailsModel> list = new();
-            var response = await _fileService.GetAllAsync<APIResponse>(token, userId, userRole); 
-            if (response != null && response.IsSuccess)
+            try
             {
-                list = JsonConvert.DeserializeObject<List<FileDetailsModel>>(Convert.ToString(response.Result));
+                List<FileDetailsModel> list = new();
+                var response = await _fileService.GetAllAsync<APIResponse>(token, userId, userRole);
+                if (response != null && response.IsSuccess)
+                {
+                    list = JsonConvert.DeserializeObject<List<FileDetailsModel>>(Convert.ToString(response.Result));
+                }
+                return list;
             }
-            return list;
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the document data. The issue has been logged for further analysis.");
+                return null;
+            }         
         }
 
         [HttpPost]
@@ -87,8 +97,9 @@ namespace CsvFileSaver.Controllers
                 }
                 return RedirectToAction("UploadFile"); // Refresh list
             }
-            catch(NullReferenceException)
+            catch(NullReferenceException ex)
             {
+                _logger.LogError(ex, "An error occurred while uploading the document . The issue has been logged for further analysis.");
                 TempData["message"] = "Invalid document. Please upload a valid CSV file";
                 return RedirectToAction("UploadFile");
             }

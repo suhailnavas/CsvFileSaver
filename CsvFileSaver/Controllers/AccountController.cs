@@ -16,10 +16,12 @@ namespace CsvFileSaver.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        public AccountController(IAuthService authService)
+        public AccountController(ILogger<AccountController> logger,IAuthService authService)
         {
             _authService = authService;
+            _logger = logger;
         }
         public async Task<IActionResult> Login()
         {
@@ -60,7 +62,7 @@ namespace CsvFileSaver.Controllers
             }
             catch(Exception e)
             {
-
+                _logger.LogError(e, "An error occurred while submitting the registration. The issue has been logged for further investigation.");
             }
             
             return View("Register");
@@ -110,6 +112,7 @@ namespace CsvFileSaver.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e.GetType().Name, "An error occurred while submitting the Login Request. The issue has been logged for further investigation.");
                 ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again.");
                 return View("Login", obj);
             }
