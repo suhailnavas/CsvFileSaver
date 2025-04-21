@@ -80,7 +80,8 @@ namespace CsvFileSaver.Controllers
                 };
 
                 APIResponse result = await _authService.LoginAsync<APIResponse>(requestobj);
-                if (result != null && result.IsSuccess)
+
+                if (result != null && result.Result != null && result.IsSuccess)
                 {
                     LoginResponceDto model = JsonConvert.DeserializeObject<LoginResponceDto>(Convert.ToString(result.Result));
 
@@ -88,23 +89,31 @@ namespace CsvFileSaver.Controllers
                     var jwt = handler.ReadJwtToken(model?.AccessToken);
 
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                    identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name")?.Value ?? ""));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                     HttpContext.Session.SetString(Constants.SessionToken, model.AccessToken);
                     HttpContext.Session.SetString(Constants.UserName, model.Name);
                     HttpContext.Session.SetString(Constants.UserId, model.Id);
                     HttpContext.Session.SetString(Constants.UserRole, model.Role);
+
                     _authService.SetToken(model.AccessToken);
+
                     return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                    return View("Login", obj);
                 }
             }
             catch (Exception e)
             {
-                return View("Register");
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again.");
+                return View("Login", obj);
             }
-
-            return View("Register");
         }
+
     }
 }
