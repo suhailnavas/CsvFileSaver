@@ -23,11 +23,14 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         private readonly APIResponse _response;
         private readonly IFileRepository _fileRepo;
         private readonly IMapper _mapper;
-        public FileUploadController(IMapper mapper,ILoginRepository dbLogin, IFileRepository fileRepo)
+        private readonly RedisCacheService _cache;
+        public FileUploadController(IMapper mapper,ILoginRepository dbLogin,
+            IFileRepository fileRepo, RedisCacheService cache)
         {
             _response = new APIResponse();
             _fileRepo = fileRepo;
             _mapper = mapper;
+            _cache = cache;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -68,6 +71,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                         _response.Result = responce;
                         _response.IsSuccess = true;
                         _response.StatusCode = HttpStatusCode.OK;
+                        await _cache?.RemoveAsync("all_products");
                         return Ok(_response);
                     }
                 }
@@ -90,7 +94,8 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         {
             try
             {
-                    var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails(role, userId));
+                    var responce = await GetFileWithCaching(role, userId);
+                    //var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails(role, userId));
                     if (responce == null)
                     {
                         _response.IsSuccess = false;
@@ -116,6 +121,28 @@ namespace CsvFileSaver_WebApi.Controllers.V1
             return _response;
         }
 
+        private async Task<object> GetFileWithCaching(string role, string userId)
+        {
+            const string cacheKey = "all_products";
+            var cachedData = await _cache.GetAsync<List<FileDetailsDto>>(cacheKey);
+
+            if (cachedData != null)
+                return ResultFilter(cachedData,role,userId);
+
+            var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails()); // Assume this is from DB
+            await _cache.SetAsync(cacheKey, responce, TimeSpan.FromMinutes(10));
+            return ResultFilter(responce, role, userId);
+        }
+
+        private object ResultFilter(List<FileDetailsDto> responce, string role, string userId)
+        {
+            if (role == "Admin")
+                return responce;
+            else
+            {
+                return responce.Where(p => p.UserId == int.Parse(userId));
+            }
+        }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -197,6 +224,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
             else
             {
                 _response.IsSuccess = true;
+                await _cache?.RemoveAsync("all_products");
                 return responce;
             }
         }
