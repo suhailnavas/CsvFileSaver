@@ -95,7 +95,6 @@ namespace CsvFileSaver_WebApi.Controllers.V1
             try
             {
                     var responce = await GetFileWithCaching(role, userId);
-                    //var responce = _mapper.Map<List<FileDetailsDto>>(await _fileRepo.GetFileDetails(role, userId));
                     if (responce == null)
                     {
                         _response.IsSuccess = false;

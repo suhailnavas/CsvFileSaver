@@ -3,6 +3,7 @@
     public static class Constants
     {
         public const string DefaultConnection = "DefaultConnection";
+        public const string Redis = "Redis";
         public const string GetOnedata = "GetOnedata";
         public const string VersionGroupNameFormat = "'v'VVV";
         public const string id = "id";

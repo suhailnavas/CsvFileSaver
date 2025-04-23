@@ -15,11 +15,7 @@ using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -85,7 +81,7 @@ builder.Services.AddVersionedApiExplorer(options =>
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = ConfigurationOptions.Parse("localhost:6379", true);
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString(Constants.Redis), true);
     return ConnectionMultiplexer.Connect(configuration);
 });
 
@@ -95,10 +91,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //dbContext.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
