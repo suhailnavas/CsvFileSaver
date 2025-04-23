@@ -5,10 +5,6 @@ namespace CsvFileSaver_WebApi.Models
 {
     public class Login
     {
-       // [Key]
-       // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-       ////public int UserId { get; set; }
-
         [Required]
         public string Email { get; set; }
 

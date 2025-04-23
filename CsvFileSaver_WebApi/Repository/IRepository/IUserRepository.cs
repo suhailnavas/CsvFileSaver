@@ -8,6 +8,6 @@ namespace CsvFileSaver_WebApi.Repository.IRepository
             bool IsUniqueUser(string username);
             Task<LoginResponceDto?> Login(LoginRequestDto loginRequestDTO);
             Task<RegisterationRequest> Register(RegisterationRequestDTO registerationRequestDTO);
-            //Task<TokenDTO> RefreshAccessToken(TokenDTO tokenDTO);        
+                    
     }
 }
