@@ -40,16 +40,10 @@ namespace CsvFileSaver_WebApi.Repository
         
         public async Task<List<CsvEmployeeRecord>> UploadRecords(List<CsvEmployeeRecord> recordDetails)
         {
-            //_db.CsvEmployeeRecords.AddRange(recordDetails);
-            //await _db.SaveChangesAsync();
 
             var batchSize = 10000;  // Insert records in batches of 10000
             for (int i = 0; i < recordDetails.Count; i += batchSize)
             {
-                //var batch = recordDetails.Skip(i).Take(batchSize).ToList();
-                //_db.CsvEmployeeRecords.AddRange(batch);
-                //await _db.SaveChangesAsync();
-
                 var batch = recordDetails.Skip(i).Take(batchSize).ToList();
                 await _db.BulkInsertAsync(batch);
             }
