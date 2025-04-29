@@ -16,10 +16,12 @@ namespace CsvFileSaver.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ILogger<AccountController> _logger;
         private readonly IAuthService _authService;
-        public AccountController(IAuthService authService)
+        public AccountController(ILogger<AccountController> logger,IAuthService authService)
         {
             _authService = authService;
+            _logger = logger;
         }
         public async Task<IActionResult> Login()
         {
@@ -60,7 +62,7 @@ namespace CsvFileSaver.Controllers
             }
             catch(Exception e)
             {
-
+                _logger.LogError(e, "An error occurred while submitting the registration. The issue has been logged for further investigation.");
             }
             
             return View("Register");
@@ -80,7 +82,8 @@ namespace CsvFileSaver.Controllers
                 };
 
                 APIResponse result = await _authService.LoginAsync<APIResponse>(requestobj);
-                if (result != null && result.IsSuccess)
+
+                if (result != null && result.Result != null && result.IsSuccess)
                 {
                     LoginResponceDto model = JsonConvert.DeserializeObject<LoginResponceDto>(Convert.ToString(result.Result));
 
@@ -88,23 +91,32 @@ namespace CsvFileSaver.Controllers
                     var jwt = handler.ReadJwtToken(model?.AccessToken);
 
                     var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-                    identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name").Value));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "name")?.Value ?? ""));
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                     HttpContext.Session.SetString(Constants.SessionToken, model.AccessToken);
                     HttpContext.Session.SetString(Constants.UserName, model.Name);
                     HttpContext.Session.SetString(Constants.UserId, model.Id);
                     HttpContext.Session.SetString(Constants.UserRole, model.Role);
+
                     _authService.SetToken(model.AccessToken);
+
                     return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                    return View("Login", obj);
                 }
             }
             catch (Exception e)
             {
-                return View("Register");
+                _logger.LogError(e.GetType().Name, "An error occurred while submitting the Login Request. The issue has been logged for further investigation.");
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again.");
+                return View("Login", obj);
             }
-
-            return View("Register");
         }
+
     }
 }

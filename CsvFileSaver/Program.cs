@@ -4,6 +4,7 @@ using CsvFileSaver.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CsvFileSaver;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,18 +35,14 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-//builder.Services.AddScoped<IBaseService, BaseService>();
-//builder.Services.AddIdentity<Users, IdentityRole>(options =>
-//{
-//    options.Password.RequireNonAlphanumeric = false;
-//    options.Password.RequiredLength = 8;
-//    options.Password.RequireUppercase = false;
-//    options.Password.RequireLowercase = false;
-//    options.User.RequireUniqueEmail = true;
-//    options.SignIn.RequireConfirmedAccount = false;
-//    options.SignIn.RequireConfirmedEmail = false;
-//    options.SignIn.RequireConfirmedPhoneNumber = false;
-//});
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Error()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/CSV_logFile.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

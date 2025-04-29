@@ -99,6 +99,5 @@ namespace CsvFileSaver_WebApi.Repository
             await _db.SaveChangesAsync();
             return user;
         }
-    }
-    
+    }    
 }
