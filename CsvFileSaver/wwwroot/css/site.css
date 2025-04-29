@@ -16,7 +16,83 @@ html {
   position: relative;
   min-height: 100%;
 }
-
 body {
-  margin-bottom: 60px;
+    background-color : white;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Optional for parallax feel */
+    color: white; /* Makes text readable */
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.typewriter {
+    overflow: hidden;
+    border-right: .15em solid orange;
+    white-space: nowrap;
+    margin: 0 auto;
+    letter-spacing: .1em;
+    width: 0;
+    animation: typing 3.5s steps(40, end) forwards, blink-caret 0.75s step-end 3s 4; /* 4 blinks max */
+}
+
+/* Typewriter effect for paragraph with delay */
+.typewriter-delayed {
+    overflow: hidden;
+    border-right: .15em solid orange;
+    white-space: nowrap;
+    margin: 20px auto;
+    letter-spacing: .1em;
+    width: 0;
+    animation: typing 3s steps(40, end) 3.7s forwards, blink-caret 0.75s step-end 7s 4;
+}
+
+/* Typing animation (same as before) */
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+/* Cursor blink (will stop after a few blinks now) */
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: orange
+    }
+}
+
+.slide-up-fade {
+    animation: slideUpFade 1.5s ease-out forwards;
+    transform: translateY(30px);
+    font-weight: bold;
+    opacity: 0;
+}
+
+@keyframes slideUpFade {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.paragraph {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: white;
 }

@@ -5,15 +5,8 @@ namespace CsvFileSaver_WebApi.Models.Dto
 {
     public class LoginDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
-
-        [Required]
-        public string UserName { get; set; }
-
-        [Required]
+       
+        public string Email { get; set; }
         public string Password { get; set; }
-
     }
 }
