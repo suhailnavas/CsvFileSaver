@@ -23,9 +23,9 @@ namespace CsvFileSaver_WebApi.Controllers.V1
         private readonly APIResponse _response;
         private readonly IFileRepository _fileRepo;
         private readonly IMapper _mapper;
-        private readonly RedisCacheService _cache;
+        private readonly IRedisCacheService _cache;
         public FileUploadController(IMapper mapper,ILoginRepository dbLogin,
-            IFileRepository fileRepo, RedisCacheService cache)
+            IFileRepository fileRepo, IRedisCacheService cache)
         {
             _response = new APIResponse();
             _fileRepo = fileRepo;
@@ -47,18 +47,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                 }
                 else
                 {
-                    var csvFile = new FileDetailsDto
-                    {
-                        FileName = file.FileName,
-                        UserName = file.UserName,
-                        UserId =file.UserId,
-                        ContentType = file.ContentType,
-                        Content = file.Content,
-                        status = file.status,
-                        IsUpdated = file.IsUpdated
-                    };
-
-                    var responce = await _fileRepo.FileDetailsUpload(csvFile);
+                    var responce = await _fileRepo.FileDetailsUpload(file);
                     if (responce == null)
                     {
                         _response.IsSuccess = false;

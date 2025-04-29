@@ -23,6 +23,7 @@ namespace CsvFileSaver_WebApi.Repository
 
         public async Task<FileDetailsDto> FileDetailsUpload(FileDetailsDto fileDetails)
         {
+
             FileDetails newFileDetails = new()
             {
                 FileName = fileDetails.FileName,
@@ -33,7 +34,7 @@ namespace CsvFileSaver_WebApi.Repository
                 status = fileDetails.status,
                 IsUpdated =fileDetails.IsUpdated
             };
-            _db.UploadFileDetails.Add(newFileDetails);
+            _db.UploadFileDetails.Add(_mapper.Map<FileDetails>(newFileDetails));
             await _db.SaveChangesAsync();
             return fileDetails;
         }

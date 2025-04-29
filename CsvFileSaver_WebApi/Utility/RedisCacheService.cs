@@ -5,7 +5,7 @@ using System.Text.Json;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class RedisCacheService
+public class RedisCacheService: IRedisCacheService
 {
     private readonly StackExchange.Redis.IDatabase _db;
 

@@ -66,6 +66,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IRedisCacheService, RedisCacheService>();
 builder.Services.AddSingleton<RedisCacheService>();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddApiVersioning(options => {
