@@ -120,8 +120,9 @@ namespace CsvFileSaver.Controllers
                 var postRequest = new FilesAndRecordsDto
                 {
                     FileDetails = _mapper.Map<FileDetailsDto>(selectedFile),
-                    RecordsDetails = _mapper.Map<List<CsvEmployeeRecordDto>>(recordList)
+                    RecordsDetails = _mapper.Map<List<CsvEmployeeRecordDto>>(recordList),                   
                 };
+                
                 var token = HttpContext.Session.GetString(Constants.SessionToken);
                 APIResponse result = await _fileService.SedRecorsAsync<APIResponse>(postRequest, token);
                 if (result != null && result.IsSuccess)
@@ -141,6 +142,8 @@ namespace CsvFileSaver.Controllers
                 return RedirectToAction("UploadFile");
             }
         }
+
+       
 
         public List<CsvEmployeeRecord> ReadCsvFromBytes(byte[] fileBytes)
         {
