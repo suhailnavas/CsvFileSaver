@@ -28,6 +28,18 @@ namespace CsvFileSaver.Service
 
             return await _baseService.SendAsync<T>(ner, true);
         }
+        
+        public async Task<T> GetRecordsAsync<T>(int fileId, string token)
+        {
+            var ner = new APIRequest()
+            {
+                ApiType = Constants.ApiType.GET,
+                Url = builderUrl + Constants.GetRecordsRequestEndPoint + string.Format(Constants.GetRecordsParams, fileId),
+                Token = token
+            };
+
+            return await _baseService.SendAsync<T>(ner, true);
+        }
 
         public Task<T> SedAsync<T>(object obj, string token)
         {

@@ -55,6 +55,10 @@ namespace CsvFileSaver_WebApi.Repository
         {          
             return await _db.UploadFileDetails.ToListAsync();
         }
+        public async Task<List<CsvEmployeeRecord>> GetRecordsDetails(string fileId)
+        {          
+            return await _db.CsvEmployeeRecords.Where(p=>p.FileId == int.Parse(fileId)).Take(100).ToListAsync();
+        }
 
         public async Task<FileDetailsDto> UpdateFileDetails(FileDetailsDto fileDetails)
         {

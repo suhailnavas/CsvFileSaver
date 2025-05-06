@@ -9,5 +9,6 @@ namespace CsvFileSaver_WebApi.Repository.IRepository
         Task<List<CsvEmployeeRecord>> UploadRecords(List<CsvEmployeeRecord> fileDetails);
         Task <List<FileDetails>>GetFileDetails();
         Task<FileDetailsDto> UpdateFileDetails(FileDetailsDto csvFile);
+        Task<List<CsvEmployeeRecord>> GetRecordsDetails(string fileId);
     }
 }

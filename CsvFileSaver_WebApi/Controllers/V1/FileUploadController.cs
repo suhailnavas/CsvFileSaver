@@ -8,6 +8,7 @@ using CsvFileSaver_WebApi.Repository.IRepository;
 using CsvFileSaver_WebApi.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Data;
 using System.Net;
@@ -148,7 +149,7 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                 {
                     var csvRecords  =_mapper.Map<List<CsvEmployeeRecord>>(filesAndRecords.RecordsDetails);
                     
-                    var recordResponce = await _fileRepo.UploadRecords(csvRecords);
+                    var recordResponce = await _fileRepo.UploadRecords(AddDocumentId(csvRecords, filesAndRecords.FileDetails.Id));
                     if (recordResponce == null)
                     {
                         _response.IsSuccess = false;
@@ -215,6 +216,62 @@ namespace CsvFileSaver_WebApi.Controllers.V1
                 await _cache?.RemoveAsync("all_products");
                 return responce;
             }
+        }
+
+        private List<CsvEmployeeRecord> AddDocumentId(List<CsvEmployeeRecord> recordList, int documentId)
+        {
+            foreach (var Item in recordList)
+            {
+                Item.FileId = documentId;
+            }
+            return recordList;
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("GetRecords")]
+        public async Task<ActionResult<APIResponse>> GetRecords([FromQuery] string fileId)
+        {
+            try
+            {
+                var responce = await GetRecordsWithCaching(fileId);
+                if (responce == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.ErrorMessages.Add("File Not saved");
+                    return NotFound();
+                }
+                else
+                {
+                    _response.Result = responce;
+                    _response.IsSuccess = true;
+                    _response.StatusCode = HttpStatusCode.OK;
+                    return Ok(_response);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+        private async Task<List<CsvEmployeeRecord>> GetRecordsWithCaching(string FileId)
+        {
+            //const string cacheKey = "all_records";
+            //var cachedData = await _cache.GetAsync<List<CsvEmployeeRecord>>(cacheKey);
+
+            //if (cachedData != null)
+            //    return Task.FromResult(cachedData);
+
+            var responce = _mapper.Map<List<CsvEmployeeRecord>>(await _fileRepo.GetRecordsDetails(FileId)); // Assume this is from DB
+           // await _cache.SetAsync(cacheKey, responce, TimeSpan.FromMinutes(10));
+            return responce;
         }
     }
 }

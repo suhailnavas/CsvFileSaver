@@ -46,7 +46,7 @@ namespace TestCsvFileProject
             var ls = Ifile.Setup(repo => repo.FileDetailsUpload(csvFileDto)).Returns(Task.FromResult(csvFileDto));
 
             var Result = Controller.FileUpload(csvFileDto);
-            var responce= Assert.IsType<ActionResult<APIResponse>>(Result.Result);
+            var responce = Assert.IsType<ActionResult<APIResponse>>(Result.Result);
 
             var response = Assert.IsType<OkObjectResult>(responce.Result);
             var apiResponse = Assert.IsType<APIResponse>(response.Value);
@@ -54,6 +54,6 @@ namespace TestCsvFileProject
             Assert.Equal(200, response.StatusCode);
             Assert.Equal(HttpStatusCode.OK, apiResponse.StatusCode);
             Assert.True(apiResponse.IsSuccess);
-        }
+        }       
     }
 }
