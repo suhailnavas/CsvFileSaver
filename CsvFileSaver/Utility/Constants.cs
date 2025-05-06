@@ -30,7 +30,10 @@ namespace CsvFileSaver.Utility
         public static string GetFileRequestEndPoint = "api/v1/FileUpload/GetFiles";
         public static string PostFileEndPoint = "api/v1/FileUpload/FileUploade";
         public static string UploadRecordsEndPoint = "api/v1/FileUpload/UploadRecords";
+        public static string GetRecordsRequestEndPoint = "api/v1/FileUpload/GetRecords";
         public static string GetFileParams = "?role={0}&userId={1}";
+        public static string GetRecordsParams = "?fileId={0}";
+        
 
         public enum ContentType
         {

@@ -32,6 +32,7 @@
                     <th>FileName</th>
                     <th>Status</th>
                     <th>Action</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -65,9 +66,13 @@
                             }
                             else
                             {
-                                <p class="text-success">Upload Completed</p>
+                                <p class="text-success">Upload Completed</p> 
+                                <form asp-controller="UploadFile" asp-action="GetRecords" method="get">
+                                    <input type="hidden" name="Id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-outline-primary">View Records</button>
+                                </form>
                             }
-                        </td>
+                        </td>                      
                    </tr>
                 }
             </tbody>
