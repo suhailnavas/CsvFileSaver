@@ -8,6 +8,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Formats.Asn1;
 using System.Globalization;
 using System.Reflection.Metadata;
@@ -120,8 +121,9 @@ namespace CsvFileSaver.Controllers
                 var postRequest = new FilesAndRecordsDto
                 {
                     FileDetails = _mapper.Map<FileDetailsDto>(selectedFile),
-                    RecordsDetails = _mapper.Map<List<CsvEmployeeRecordDto>>(recordList)
+                    RecordsDetails = _mapper.Map<List<CsvEmployeeRecordDto>>(recordList),                   
                 };
+                
                 var token = HttpContext.Session.GetString(Constants.SessionToken);
                 APIResponse result = await _fileService.SedRecorsAsync<APIResponse>(postRequest, token);
                 if (result != null && result.IsSuccess)
@@ -141,6 +143,29 @@ namespace CsvFileSaver.Controllers
                 return RedirectToAction("UploadFile");
             }
         }
+
+        [HttpGet("GetRecords")]
+        public async Task<IActionResult> GetRecords(FileDetailsModel selectedFile)
+        {
+            try
+            {
+                var token = HttpContext.Session.GetString(Constants.SessionToken);
+
+                List<CsvEmployeeRecordDto> list = new();
+                var response = await _fileService.GetRecordsAsync<APIResponse>(selectedFile.Id,token);
+                if (response != null && response.IsSuccess)
+                {
+                    list = JsonConvert.DeserializeObject<List<CsvEmployeeRecordDto>>(Convert.ToString(response.Result));
+                }
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving the document data. The issue has been logged for further analysis.");
+                return null;
+            }
+        }
+
 
         public List<CsvEmployeeRecord> ReadCsvFromBytes(byte[] fileBytes)
         {
